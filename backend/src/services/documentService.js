@@ -41,7 +41,7 @@ function deleteDocument(id, owner) {
     return false;
   }
 
-  
+  fileRepository.remove(document.storageName);
   documentRepository.remove(id);
   return true;
 }
