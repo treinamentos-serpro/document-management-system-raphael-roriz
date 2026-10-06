@@ -44,6 +44,7 @@ Camadas internas não conhecem camadas externas.
 - `POST /upload` - envia um documento
 - `GET /documents` - lista os documentos
 - `GET /documents/:id/download` - baixa um documento
+- `DELETE /documents/:id` - exclui um documento do usuário
 
 ## Armazenamento (restrição importante)
 
