@@ -117,7 +117,7 @@ h1 { margin-bottom: 7px; font-family: 'Playfair Display', Georgia, serif; font-s
 .sort-label { color: var(--muted); font-size: 11px; }
 .sort-label span { margin-left: 3px; color: var(--coral); }
 .document-list { border-bottom: 1px solid var(--line); }
-.document-row { min-height: 77px; display: grid; grid-template-columns: 42px minmax(0, 1fr) 90px 102px; align-items: center; gap: 14px; padding: 10px 6px; border-bottom: 1px solid var(--line); animation: row-in .28s ease both; }
+.document-row { min-height: 77px; display: grid; grid-template-columns: 42px minmax(0, 1fr) 90px 190px; align-items: center; gap: 14px; padding: 10px 6px; border-bottom: 1px solid var(--line); animation: row-in .28s ease both; }
 .document-row:last-child { border-bottom: 0; }
 .file-type { width: 38px; height: 43px; display: grid; place-items: center; border: 1px solid #e3cabe; border-radius: 2px 7px 2px 2px; color: #a65840; background: #fbf1ec; font-family: 'DM Mono', monospace; font-size: 8px; }
 .document-name { min-width: 0; }
@@ -129,6 +129,10 @@ h1 { margin-bottom: 7px; font-family: 'Playfair Display', Georgia, serif; font-s
 .download-button:disabled { color: var(--muted); cursor: wait; }
 .download-button > span:first-child { font-size: 16px; line-height: 1; }
 .download-label { font-size: 11px; font-weight: 600; }
+.document-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.delete-button { min-width: 70px; min-height: 34px; padding: 0 9px; border: 1px solid #e9c6b9; border-radius: 3px; color: #8e3d2a; background: #fff6f2; font-size: 11px; font-weight: 600; cursor: pointer; }
+.delete-button:hover:not(:disabled) { border-color: #c96c50; background: #fbe9e2; }
+.delete-button:disabled { opacity: .55; cursor: wait; }
 .empty-state, .list-state { min-height: 118px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 1px solid var(--line); color: var(--muted); }
 .empty-state p, .list-state { margin-bottom: 0; font-size: 12px; }
 .empty-mark { margin-bottom: 8px; color: var(--coral); font-family: 'Playfair Display', Georgia, serif; font-size: 27px; }
@@ -157,10 +161,12 @@ h1 { margin-bottom: 7px; font-family: 'Playfair Display', Georgia, serif; font-s
   .documents-section { margin-top: 37px; }
   .section-heading h2 { font-size: 21px; }
   .sort-label { max-width: 100px; text-align: right; line-height: 1.4; }
-  .document-row { grid-template-columns: 38px minmax(0, 1fr) 78px; gap: 10px; min-height: 72px; padding: 9px 0; }
+  .document-row { grid-template-columns: 38px minmax(0, 1fr) auto; gap: 10px; min-height: 72px; padding: 9px 0; }
   .file-type { width: 34px; height: 39px; }
   .document-size { display: none; }
+  .document-actions { gap: 6px; }
   .download-button { width: 76px; min-height: 32px; gap: 4px; }
+  .delete-button { min-width: 62px; min-height: 32px; padding: 0 6px; font-size: 10px; }
   .download-label { font-size: 10px; }
   .footer { padding-right: 18px; padding-left: 18px; font-size: 8px; }
 }

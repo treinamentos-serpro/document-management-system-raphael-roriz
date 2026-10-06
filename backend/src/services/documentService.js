@@ -35,9 +35,20 @@ function findDownload(id, owner) {
   };
 }
 
+function deleteDocument(id, owner) {
+  const document = documentRepository.findById(id);
+  if (!document || document.owner !== owner) {
+    return false;
+  }
+
+  fileRepository.remove(document.storageName);
+  documentRepository.remove(id);
+  return true;
+}
+
 function toPublicDocument(document) {
   const { storageName, ...publicDocument } = document;
   return publicDocument;
 }
 
-module.exports = { createDocument, createUploadMiddleware, findDownload, listDocuments };
+module.exports = { createDocument, createUploadMiddleware, deleteDocument, findDownload, listDocuments };

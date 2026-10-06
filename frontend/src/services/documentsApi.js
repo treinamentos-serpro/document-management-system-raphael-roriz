@@ -34,3 +34,7 @@ export async function downloadDocument(owner, id) {
   const response = await request(`/documents/${encodeURIComponent(id)}/download`, owner);
   return response.blob();
 }
+
+export async function deleteDocument(owner, id) {
+  await request(`/documents/${encodeURIComponent(id)}`, owner, { method: 'DELETE' });
+}

@@ -38,7 +38,7 @@ O conteúdo abaixo especifica o arquivo solicitado, mas não o salvei no workspa
 
 ## 1. Objetivo
 
-Permitir que usuários enviem, consultem e baixem seus documentos, armazenando os arquivos no filesystem local e mantendo seus metadados em memória.
+Permitir que usuários enviem, consultem, baixem e excluam seus documentos, armazenando os arquivos no filesystem local e mantendo seus metadados em memória.
 
 ## 2. Escopo
 
@@ -47,7 +47,8 @@ Permitir que usuários enviem, consultem e baixem seus documentos, armazenando o
 - Envio de um arquivo por requisição.
 - Listagem dos documentos pertencentes ao usuário informado na requisição.
 - Download de um documento pelo identificador, somente pelo respectivo usuário.
-- Interface web simples para envio, listagem e download.
+- Exclusão de um documento e de seu arquivo local, somente pelo respectivo usuário.
+- Interface web simples para envio, listagem, download e exclusão.
 - Persistência dos arquivos em `storage` e dos metadados em memória.
 
 ### Fora do escopo
@@ -55,7 +56,7 @@ Permitir que usuários enviem, consultem e baixem seus documentos, armazenando o
 - Armazenamento externo ou em nuvem.
 - Banco de dados ou persistência dos metadados após reiniciar o processo.
 - Autenticação, cadastro de usuários e autorização robusta.
-- Versionamento, edição e exclusão de documentos.
+- Versionamento e edição de documentos.
 - Upload de múltiplos arquivos na mesma requisição.
 
 ## 3. Requisitos funcionais
@@ -70,6 +71,8 @@ Permitir que usuários enviem, consultem e baixem seus documentos, armazenando o
 | RF-06 | O sistema rejeita requisições sem arquivo, sem identificador de usuário ou com arquivo acima do limite configurado. |
 | RF-07 | O sistema retorna erros em formato JSON consistente para falhas das operações. |
 | RF-08 | A interface permite selecionar e enviar um documento, visualizar a lista e iniciar o download de um item. |
+| RF-09 | O usuário pode excluir um documento próprio; o arquivo local e seus metadados são removidos. |
+| RF-10 | A interface confirma a exclusão antes de remover permanentemente um documento. |
 
 ## 4. Requisitos não funcionais
 
@@ -147,6 +150,12 @@ Exemplo de resposta:
 - Sucesso: `200 OK`, conteúdo binário do arquivo, com disposição de download e nome original como nome sugerido.
 - Erros: `404 Not Found` tanto para documento inexistente quanto para documento pertencente a outro usuário, sem revelar a existência de documentos alheios.
 
+### `DELETE /documents/:id`
+
+- Entrada: identificador na URL e cabeçalho `X-User-Id`.
+- Sucesso: `204 No Content`; remove o arquivo local e os metadados do documento.
+- Erros: `404 Not Found` para documento inexistente ou pertencente a outro usuário, sem revelar a existência de documentos alheios; `500 Internal Server Error` para falha inesperada ao remover o arquivo.
+
 ### Formato de erro
 
 Erros de API devem usar uma estrutura consistente:
@@ -166,7 +175,7 @@ Códigos mínimos previstos: `FILE_REQUIRED`, `USER_REQUIRED`, `FILE_TOO_LARGE`,
 
 - `routes/` registra endpoints e encaminha chamadas aos controllers.
 - `controllers/` lê parâmetros, cabeçalhos e arquivos recebidos; traduz resultados e erros para HTTP.
-- `services/` aplica regras de negócio, incluindo associação do documento ao usuário e autorização do download.
+- `services/` aplica regras de negócio, incluindo associação do documento ao usuário e autorização de download e exclusão.
 - `repositories/` mantém metadados em memória e encapsula o acesso aos arquivos locais.
 - O upload usa `multer` com `diskStorage`; o caminho de armazenamento é local à aplicação.
 - O frontend consome a API com `fetch` pelo prefixo `/api`, encaminhado pelo proxy do Vite.

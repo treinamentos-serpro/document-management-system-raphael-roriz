@@ -10,7 +10,7 @@ function getExtension(name) {
   return extension && extension !== name ? extension.slice(0, 4).toUpperCase() : 'FILE';
 }
 
-export default function DocumentList({ documents, loading, downloadingId, onDownload }) {
+export default function DocumentList({ documents, loading, downloadingId, deletingId, onDownload, onDelete }) {
   if (loading) {
     return <div className="list-state" role="status">Carregando documentos…</div>;
   }
@@ -34,12 +34,24 @@ export default function DocumentList({ documents, loading, downloadingId, onDown
             <p>Enviado em {formatDate(document.uploadedAt)}</p>
           </div>
           <span className="document-size">{formatFileSize(document.size)}</span>
-          <DownloadButton
-            downloading={downloadingId === document.id}
-            disabled={Boolean(downloadingId)}
-            fileName={document.originalName}
-            onClick={() => onDownload(document)}
-          />
+          <div className="document-actions">
+            <DownloadButton
+              downloading={downloadingId === document.id}
+              disabled={Boolean(downloadingId) || Boolean(deletingId)}
+              fileName={document.originalName}
+              onClick={() => onDownload(document)}
+            />
+            <button
+              className="delete-button"
+              type="button"
+              aria-label={`Excluir ${document.originalName}`}
+              title={`Excluir ${document.originalName}`}
+              disabled={Boolean(downloadingId) || Boolean(deletingId)}
+              onClick={() => onDelete(document)}
+            >
+              {deletingId === document.id ? 'Excluindo…' : 'Excluir'}
+            </button>
+          </div>
         </article>
       ))}
     </div>

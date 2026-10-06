@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { downloadDocument, listDocuments, uploadDocument } from './services/documentsApi.js';
+import { deleteDocument, downloadDocument, listDocuments, uploadDocument } from './services/documentsApi.js';
 import UploadComponent from './components/UploadComponent.jsx';
 import DocumentList from './components/DocumentList.jsx';
 import './styles.css';
@@ -11,6 +11,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [downloadingId, setDownloadingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
   const [resetUpload, setResetUpload] = useState(0);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
@@ -60,7 +61,7 @@ export default function App() {
   }
 
   async function handleDownload(document) {
-    if (downloadingId) return;
+    if (downloadingId || deletingId) return;
     setDownloadingId(document.id);
     setError('');
     try {
@@ -83,6 +84,25 @@ export default function App() {
     }
   }
 
+  async function handleDelete(document) {
+    if (downloadingId || deletingId) return;
+    const confirmed = window.confirm(`Excluir "${document.originalName}" permanentemente?`);
+    if (!confirmed) return;
+
+    setDeletingId(document.id);
+    setError('');
+    setNotice('');
+    try {
+      await deleteDocument(owner, document.id);
+      setDocuments((currentDocuments) => currentDocuments.filter(({ id }) => id !== document.id));
+      setNotice('Documento excluído.');
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -96,7 +116,7 @@ export default function App() {
             id="owner-id"
             value={owner}
             maxLength={128}
-            disabled={uploading || Boolean(downloadingId)}
+            disabled={uploading || Boolean(downloadingId) || Boolean(deletingId)}
             onChange={(event) => setOwner(event.target.value)}
             aria-describedby="identity-note"
           />
@@ -144,7 +164,9 @@ export default function App() {
             documents={documents}
             loading={loading}
             downloadingId={downloadingId}
+            deletingId={deletingId}
             onDownload={handleDownload}
+            onDelete={handleDelete}
           />
         </section>
       </main>

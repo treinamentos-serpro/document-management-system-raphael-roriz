@@ -52,10 +52,22 @@ function download(req, res) {
   });
 }
 
+function remove(req, res) {
+  const removed = documentService.deleteDocument(req.params.id, req.documentOwner);
+  if (!removed) {
+    return res.status(404).json({
+      error: { code: 'DOCUMENT_NOT_FOUND', message: 'Documento não encontrado.' }
+    });
+  }
+
+  return res.status(204).end();
+}
+
 module.exports = {
   download,
   list,
   receiveFile: documentService.createUploadMiddleware(),
   requireOwner,
+  remove,
   upload
 };

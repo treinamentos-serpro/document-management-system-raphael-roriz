@@ -56,12 +56,31 @@ test('upload, listagem, isolamento e download de documentos', async (context) =>
   });
   assert.strictEqual(deniedResponse.status, 404);
 
+  const deniedDelete = await fetch(`${baseUrl}/documents/${created.id}`, {
+    method: 'DELETE',
+    headers: { 'X-User-Id': 'another-owner' }
+  });
+  assert.strictEqual(deniedDelete.status, 404);
+  assert.strictEqual(fs.existsSync(fileRepository.getFilePath(created.id)), true);
+
   const downloadResponse = await fetch(`${baseUrl}/documents/${created.id}/download`, {
     headers: { 'X-User-Id': 'test-owner' }
   });
   assert.strictEqual(downloadResponse.status, 200);
   assert.strictEqual(await downloadResponse.text(), 'document body');
   assert.match(downloadResponse.headers.get('content-disposition'), /notes\.txt/);
+
+  const deleteResponse = await fetch(`${baseUrl}/documents/${created.id}`, {
+    method: 'DELETE',
+    headers: { 'X-User-Id': 'test-owner' }
+  });
+  assert.strictEqual(deleteResponse.status, 204);
+  assert.strictEqual(fs.existsSync(fileRepository.getFilePath(created.id)), false);
+
+  const listAfterDelete = await fetch(`${baseUrl}/documents`, {
+    headers: { 'X-User-Id': 'test-owner' }
+  });
+  assert.deepStrictEqual((await listAfterDelete.json()).documents, []);
 });
 
 test('rejeita usuário ausente, arquivo ausente e arquivo acima do limite', async (context) => {
